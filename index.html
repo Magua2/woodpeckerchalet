@@ -283,6 +283,13 @@ footer a:hover{color:#fff}
 .xlist a::after{content:"↗";color:var(--gold);font-size:14px}
 .xlist a:hover,.xlist a:focus-visible{color:var(--gold-l);outline:none}
 .xlist li{display:flex}.xlist li::before{flex:none}.xlist li a{flex:1}
+
+.revhead{display:flex;gap:36px;align-items:center;flex-wrap:wrap;margin-bottom:40px}
+.revhead .big{margin:0}
+.revwidget{min-height:120px;background:#f7f3ea;color:#24221e;border:1px solid var(--gold);padding:clamp(12px,2vw,24px)}
+.revlink{margin-top:20px;text-align:right}
+.revlink a{color:var(--gold-l);text-decoration:none;font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.revlink a:hover{color:#fff}
 </style>
 </head>
 <body>
@@ -356,11 +363,13 @@ footer a:hover{color:#fff}
   </div>
  </div></section>
 
- <section class="night dark"><div class="wrap">
-  <div class="quote">
-   <div><div class="big">4.7</div><span class="eyebrow">Guest rating on Airbnb</span><span class="rule"></span><p>Loved by families, friends and remote workers in every season.</p></div>
-   <div><span class="note">Placeholder · replace with a real guest review</span><blockquote>"Your favorite line from a real guest review goes here, set large and elegant."</blockquote><div class="who">Guest first name · Month Year</div></div>
+ <section class="night dark" id="reviews"><div class="wrap">
+  <div class="revhead">
+   <div class="big">4.7</div>
+   <div><span class="eyebrow">Guest reviews</span><h2 class="h2s" style="color:#fff;margin-top:8px">What our guests say</h2><p>Loved by families, friends and remote workers in every season.</p></div>
   </div>
+  <div class="revwidget"><div class="elfsight-app-9fbcddc2-fae8-4b2d-b048-46865665b06b" data-elfsight-app-lazy><p style="text-align:center;color:#77705f;font-size:14px">Loading guest reviews…</p></div></div>
+  <p class="revlink"><a href="https://share.google/t1dWQottDatM3dgXf" target="_blank" rel="noopener">Read all reviews on Google ↗</a></p>
  </div></section>
  <div class="golf" role="img" aria-label="Golf course at Massanutten"></div>
 </div>
@@ -632,5 +641,6 @@ document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{co
  navigator.clipboard?.writeText(v).then(()=>{b.textContent='Copied'},()=>{b.textContent=v}).catch(()=>{b.textContent=v})}));
 </script>
 
+<script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
 </body>
 </html>
