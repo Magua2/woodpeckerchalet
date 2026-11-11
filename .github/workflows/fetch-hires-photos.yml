@@ -1,0 +1,22 @@
+name: Fetch full-resolution photos
+on:
+  push:
+    paths: ['.github/workflows/fetch-hires-photos.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p _hires
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          while IFS=$'\t' read -r name u; do
+            curl -sSL -A "$UA" "$u=s0" -o "_hires/$name.jpg" || echo "fail $name"
+            echo "$name $(file -b "_hires/$name.jpg" | grep -oE '[0-9]+x[0-9]+' | tail -1) $(stat -c %s _hires/$name.jpg)"
+          done < _hires_list.tsv
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898313+github-actions[bot]@users.noreply.github.com"
+          git add _hires && git commit -m "Fetch full-resolution photos" && git push
