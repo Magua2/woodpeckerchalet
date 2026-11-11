@@ -303,6 +303,11 @@ footer a:hover{color:#fff}
 .duo{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-bottom:28px}
 .duo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .sp-hero{min-height:360px;display:flex;flex-direction:column;justify-content:center}
+.sp-hero{position:relative;overflow:hidden;background:#0f2a1c}
+.sp-hero>*{position:relative;z-index:1}
+@media (min-width:761px){.sp-hero>*{max-width:50%}}
+.sp-hero::before{content:"";position:absolute;top:0;right:0;bottom:0;width:55%;background:var(--img) center/cover no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent,#000 45%);mask-image:linear-gradient(90deg,transparent,#000 45%)}
+@media (max-width:760px){.sp-hero::before{width:100%;opacity:.28;-webkit-mask-image:none;mask-image:none}}
 </style>
 </head>
 <body>
@@ -360,7 +365,7 @@ footer a:hover{color:#fff}
   <div class="head c"><span class="eyebrow">All‑season retreat</span><h2 style="color:#fff">Four seasons, one chalet</h2><span class="rule"></span></div>
   <div class="seasons">
    <a href="#seasons" class="sc" style="--img:url(images/photos/winter-skiing-800.jpg)"><span class="eyebrow">Dec – Feb</span><h3>Winter</h3><p>Skiing, snowboarding and snow tubing, then the hot tub under falling snow.</p></a>
-   <a href="#seasons" class="sc" style="--img:url(images/photos/spring-vineyard-800.jpg)"><span class="eyebrow">Mar – May</span><h3>Spring</h3><p>Waterfalls in Shenandoah National Park and caverns to explore.</p></a>
+   <a href="#seasons" class="sc" style="--img:url(images/photos/spring-picnic-800.jpg)"><span class="eyebrow">Mar – May</span><h3>Spring</h3><p>Waterfalls in Shenandoah National Park and caverns to explore.</p></a>
    <a href="#seasons" class="sc" style="--img:url(images/photos/summer-waterpark-800.jpg)"><span class="eyebrow">Jun – Aug</span><h3>Summer</h3><p>Massanutten Waterpark, golf, and long dinners on the deck.</p></a>
    <a href="#seasons" class="sc" style="--img:url(images/photos/autumn-drive-800.jpg)"><span class="eyebrow">Sep – Nov</span><h3>Autumn</h3><p>Blazing foliage, vineyard tastings and evenings by the fire pit.</p></a>
   </div>
@@ -598,19 +603,19 @@ addEventListener('hashchange',show);show();
 const SEASONS={
  winter:{months:'December – February',title:'Winter at the chalet',lead:'Snow on the pines, fresh tracks on the slopes, and the hot tub steaming on the deck.',
   doo:['Skiing & snowboarding at Massanutten','Snow tubing for all ages','Holiday markets in Harrisonburg','Hot tub nights under the stars'],
-  perks:['Ski storage space by the door','Fire table & cozy blankets','Hot cocoa in the welcome basket'],offer:'Book 5+ midweek nights in January or February and receive a private chef breakfast.',bg:'linear-gradient(100deg,rgba(10,31,21,.92) 30%,rgba(10,31,21,.35)),url(images/photos/winter-skiing.jpg) center/cover'},
+  perks:['Ski storage space by the door','Fire table & cozy blankets','Hot cocoa in the welcome basket'],offer:'Book 5+ midweek nights in January or February and receive a private chef breakfast.',bg:'url(images/photos/winter-skiing.jpg)'},
  spring:{months:'March – May',title:'Spring in the valley',lead:'Wildflowers, waterfalls and the first warm evenings on the deck.',
   doo:['Waterfall hikes in Shenandoah National Park','Luray, Grand & Skyline Caverns','Mountain biking at Massanutten','Gardens & arboretums in bloom'],
-  perks:['Outdoor dining on the deck','Charcoal grill','Trail maps & local tips'],offer:'Spring Break weeks: stay 7 nights, save 10%.',bg:'linear-gradient(100deg,rgba(10,31,21,.92) 30%,rgba(10,31,21,.35)),url(images/photos/spring-vineyard.jpg) center/cover'},
+  perks:['Outdoor dining on the deck','Charcoal grill','Trail maps & local tips'],offer:'Spring Break weeks: stay 7 nights, save 10%.',bg:'url(images/photos/spring-picnic.jpg)'},
  summer:{months:'June – August',title:'Summer for the whole family',lead:'Long days at the waterpark, rounds of golf, and dinners outside until the fireflies come out.',
   doo:['Massanutten Waterpark','Family Adventure Park & mini‑golf','Mountain Greens golf course','Canoeing, kayaking & fishing'],
-  perks:['Games room for rainy afternoons','Space for 14 guests','Washer & dryer for swim gear'],offer:'Book a full summer week and the games room karaoke night is on us.',bg:'linear-gradient(100deg,rgba(10,31,21,.92) 30%,rgba(10,31,21,.35)),url(images/photos/summer-waterpark.jpg) center/cover'},
+  perks:['Games room for rainy afternoons','Space for 14 guests','Washer & dryer for swim gear'],offer:'Book a full summer week and the games room karaoke night is on us.',bg:'url(images/photos/summer-waterpark.jpg)'},
  autumn:{months:'September – November',title:'Autumn in color',lead:'The valley glows red and gold. Days for vineyards and scenic drives, nights for the fire pit.',
   doo:['Skyline Drive foliage','Vineyard & brewery tastings','Harvest festivals & county fair','Horseback riding'],
-  perks:['Fire pit with s\'mores kit','Wraparound deck views','Cozy linens & blankets'],offer:'Fall Offers: midweek stays at a special rate. Ask about dates.',bg:'linear-gradient(100deg,rgba(10,31,21,.92) 30%,rgba(10,31,21,.35)),url(images/photos/autumn-drive.jpg) center/cover'}
+  perks:['Fire pit with s\'mores kit','Wraparound deck views','Cozy linens & blankets'],offer:'Fall Offers: midweek stays at a special rate. Ask about dates.',bg:'url(images/photos/autumn-drive.jpg)'}
 };
 function renderSeason(k){const s=SEASONS[k];document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.s===k));
- document.getElementById('seasonPanel').innerHTML=`<div class="sp-hero" style="background:${s.bg}"><span class="eyebrow">${s.months}</span><h2>${s.title}</h2><span class="rule"></span><p>${s.lead}</p></div>
+ document.getElementById('seasonPanel').innerHTML=`<div class="sp-hero" style="--img:${s.bg}"><span class="eyebrow">${s.months}</span><h2>${s.title}</h2><span class="rule"></span><p>${s.lead}</p></div>
  <div class="sp-body"><div><span class="eyebrow">Things to do</span><ul class="list">${s.doo.map(x=>'<li>'+x+'</li>').join('')}</ul></div>
  <div><span class="eyebrow">At the chalet</span><ul class="list">${s.perks.map(x=>'<li>'+x+'</li>').join('')}</ul></div>
  <div class="offer"><span class="eyebrow">Seasonal offer · example</span><p>${s.offer}</p><a class="btn solid" href="#stays">Check Dates</a></div></div>`;}
