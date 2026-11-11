@@ -1,0 +1,42 @@
+name: Import photos from old Google Site
+on:
+  push:
+    paths: ['.github/workflows/import-google-site-photos.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pages and photos
+        run: |
+          set -u
+          mkdir -p _import/pages images/gsite
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          base="https://sites.google.com/view/woodpeckerchalet"
+          for p in home lodging amenities amenities/private-chef-and-catering amenities/spa-and-wellness virginia-is-for-lvers; do
+            name=$(echo "$p" | tr '/' '_')
+            curl -sSL -A "$UA" "$base/$p" -o "_import/pages/$name.html" || echo "page failed $p"
+            echo "$p: $(wc -c < _import/pages/$name.html) bytes"
+          done
+          cat _import/pages/*.html | sed 's/\\u003d/=/g; s/&amp;/\&/g' \
+            | grep -oE 'https://(sites\.google\.com/sitesv-images-rt|lh[0-9]\.googleusercontent\.com/sitesv)/[A-Za-z0-9_=./-]+' \
+            | sed -E 's/=w[0-9]+(-h[0-9]+)?.*$//; s/=s[0-9]+.*$//' | awk '!seen[$0]++' > _import/image-urls.txt
+          echo "found $(wc -l < _import/image-urls.txt) images"
+          n=0; : > _import/manifest.tsv
+          while read -r u; do
+            n=$((n+1)); f=$(printf "images/gsite/%02d.jpg" "$n")
+            if curl -sSL -A "$UA" "$u=w1600" -o "$f"; then
+              echo -e "$f\t$(file -b --mime-type "$f")\t$(stat -c %s "$f")\t$u" >> _import/manifest.tsv
+            fi
+          done < _import/image-urls.txt
+          cat _import/manifest.tsv | cut -f1-3
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898313+github-actions[bot]@users.noreply.github.com"
+          git add _import images
+          git commit -m "Import photos from old Google Site" || echo "nothing to commit"
+          git push
