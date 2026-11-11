@@ -10,13 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          mkdir -p _hires
+          mkdir -p _hires _tmp
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
-          while IFS=$'\t' read -r name u; do
-            curl -sSL -A "$UA" "$u=s0" -o "_hires/$name.jpg" || echo "fail $name"
-            echo "$name $(file -b "_hires/$name.jpg" | grep -oE '[0-9]+x[0-9]+' | tail -1) $(stat -c %s _hires/$name.jpg)"
+          base="https://sites.google.com/view/woodpeckerchalet"
+          for p in home lodging amenities amenities/private-chef-and-catering amenities/spa-and-wellness virginia-is-for-lvers; do
+            curl -sSL -A "$UA" "$base/$p" -o "_tmp/$(echo $p | tr / _).html"
+          done
+          cat _tmp/*.html | sed 's/\\u003d/=/g; s/&amp;/\&/g' \
+            | grep -oE 'https://(sites\.google\.com/sitesv-images-rt|lh[0-9]\.googleusercontent\.com/sitesv)/[A-Za-z0-9_=./-]+' \
+            | sed -E 's/=w[0-9]+(-h[0-9]+)?.*$//; s/=s[0-9]+.*$//' | awk '!seen[$0]++' > _tmp/urls.txt
+          echo "found $(wc -l < _tmp/urls.txt)"
+          while IFS=$'\t' read -r n name; do
+            u=$(sed -n "${n}p" _tmp/urls.txt)
+            curl -sSL -A "$UA" "$u=w1600" -o "_hires/$name.check.jpg"
+            curl -sSL -A "$UA" "$u=w3200" -o "_hires/$name.jpg"
+            echo "$name $(file -b _hires/$name.jpg | grep -oE '[0-9]+x[0-9]+' | tail -1) $(stat -c %s _hires/$name.jpg)"
           done < _hires_list.tsv
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898313+github-actions[bot]@users.noreply.github.com"
-          git add _hires && git commit -m "Fetch full-resolution photos" && git push
+          git add _hires && git commit -m "Fetch full-resolution photos (2)" && git push
