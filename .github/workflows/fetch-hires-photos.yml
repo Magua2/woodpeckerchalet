@@ -20,13 +20,12 @@ jobs:
             | grep -oE 'https://(sites\.google\.com/sitesv-images-rt|lh[0-9]\.googleusercontent\.com/sitesv)/[A-Za-z0-9_=./-]+' \
             | sed -E 's/=w[0-9]+(-h[0-9]+)?.*$//; s/=s[0-9]+.*$//' | awk '!seen[$0]++' > _tmp/urls.txt
           echo "found $(wc -l < _tmp/urls.txt)"
-          while IFS=$'\t' read -r n name; do
-            u=$(sed -n "${n}p" _tmp/urls.txt)
-            curl -sSL -A "$UA" "$u=w1600" -o "_hires/$name.check.jpg"
-            curl -sSL -A "$UA" "$u=w3200" -o "_hires/$name.jpg"
-            echo "$name $(file -b _hires/$name.jpg | grep -oE '[0-9]+x[0-9]+' | tail -1) $(stat -c %s _hires/$name.jpg)"
-          done < _hires_list.tsv
+          n=0
+          while read -r u; do
+            n=$((n+1)); curl -sSL -A "$UA" "$u=w3200" -o "_hires/$(printf %03d $n).jpg" || echo "fail $n"
+          done < _tmp/urls.txt
+          ls _hires | wc -l
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898313+github-actions[bot]@users.noreply.github.com"
-          git add _hires && git commit -m "Fetch full-resolution photos (2)" && git push
+          git add _hires && git commit -m "Fetch full-resolution photos (3)" && git push
